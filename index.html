@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جامعتي - إدارة المحاضرات الذكية</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>جامعتي</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="lang-toggle" onclick="toggleLanguage()">
+                        <i class="fas fa-language"></i>
+                        <span id="lang-text">EN</span>
+                    </button>
+                    <button class="notification-btn" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-content">
+                    <h2 class="welcome-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span data-ar="مرحباً بك في نظام إدارة المحاضرات الذكي" data-en="Welcome to Smart Lecture Management System">مرحباً بك في نظام إدارة المحاضرات الذكي</span>
+                    </h2>
+                    <p class="welcome-subtitle" data-ar="نظم جدولك الأكاديمي واحصل على تذكيرات ذكية لمحاضراتك" data-en="Organize your academic schedule and get smart reminders for your lectures">نظم جدولك الأكاديمي واحصل على تذكيرات ذكية لمحاضراتك</p>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <div class="action-cards">
+                    <div class="action-card" onclick="showAddLectureModal()">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3 data-ar="إضافة محاضرة" data-en="Add Lecture">إضافة محاضرة</h3>
+                        <p data-ar="أضف محاضرة جديدة لجدولك" data-en="Add a new lecture to your schedule">أضف محاضرة جديدة لجدولك</p>
+                    </div>
+                    <div class="action-card" onclick="showSchedule()">
+                        <i class="fas fa-calendar-week"></i>
+                        <h3 data-ar="عرض الجدول" data-en="View Schedule">عرض الجدول</h3>
+                        <p data-ar="اعرض برنامجك الأسبوعي" data-en="View your weekly program">اعرض برنامجك الأسبوعي</p>
+                    </div>
+                    <div class="action-card" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf"></i>
+                        <h3 data-ar="تصدير PDF" data-en="Export PDF">تصدير PDF</h3>
+                        <p data-ar="احفظ جدولك كملف PDF" data-en="Save your schedule as PDF">احفظ جدولك كملف PDF</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="البحث السريع في المحاضرات..." data-ar-placeholder="البحث السريع في المحاضرات..." data-en-placeholder="Quick search in lectures...">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Schedule Display -->
+            <section class="schedule-section" id="scheduleSection">
+                <div class="schedule-header">
+                    <h2>
+                        <i class="fas fa-calendar-alt"></i>
+                        <span data-ar="برنامج المحاضرات الأسبوعي" data-en="Weekly Lecture Schedule">برنامج المحاضرات الأسبوعي</span>
+                    </h2>
+                    <div class="schedule-controls">
+                        <button class="btn-secondary" onclick="clearAllLectures()">
+                            <i class="fas fa-trash"></i>
+                            <span data-ar="مسح الكل" data-en="Clear All">مسح الكل</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="schedule-grid" id="scheduleGrid">
+                    <!-- Schedule will be populated by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Add Lecture Modal -->
+    <div class="modal" id="addLectureModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-plus"></i>
+                    <span data-ar="إضافة محاضرة جديدة" data-en="Add New Lecture">إضافة محاضرة جديدة</span>
+                </h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form class="lecture-form" id="lectureForm">
+                <div class="form-group">
+                    <label for="lectureName">
+                        <i class="fas fa-book"></i>
+                        <span data-ar="اسم المحاضرة" data-en="Lecture Name">اسم المحاضرة</span>
+                    </label>
+                    <input type="text" id="lectureName" required placeholder="مثال: رياضيات متقطعة">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lectureType">
+                        <i class="fas fa-tag"></i>
+                        <span data-ar="نوع المحاضرة" data-en="Lecture Type">نوع المحاضرة</span>
+                    </label>
+                    <select id="lectureType" required>
+                        <option value="">اختر نوع المحاضرة</option>
+                        <option value="نظري">نظري</option>
+                        <option value="عملي">عملي</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="professorName">
+                        <i class="fas fa-user-tie"></i>
+                        <span data-ar="اسم الدكتور" data-en="Professor Name">اسم الدكتور</span>
+                    </label>
+                    <input type="text" id="professorName" placeholder="اختياري">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lectureTime">
+                        <i class="fas fa-clock"></i>
+                        <span data-ar="وقت بداية المحاضرة" data-en="Lecture Start Time">وقت بداية المحاضرة</span>
+                    </label>
+                    <input type="time" id="lectureTime" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lectureLocation">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span data-ar="مكان الحضور" data-en="Location">مكان الحضور</span>
+                    </label>
+                    <input type="text" id="lectureLocation" required placeholder="مثال: القاعة رقم 4511">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lectureDay">
+                        <i class="fas fa-calendar-day"></i>
+                        <span data-ar="اليوم" data-en="Day">اليوم</span>
+                    </label>
+                    <select id="lectureDay" required>
+                        <option value="">اختر اليوم</option>
+                        <option value="الأحد">الأحد</option>
+                        <option value="الاثنين">الاثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option>
+                        <option value="الأربعاء">الأربعاء</option>
+                        <option value="الخميس">الخميس</option>
+                        <option value="الجمعة">الجمعة</option>
+                        <option value="السبت">السبت</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                        <span data-ar="إلغاء" data-en="Cancel">إلغاء</span>
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span data-ar="حفظ المحاضرة" data-en="Save Lecture">حفظ المحاضرة</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Settings Modal -->
+    <div class="modal" id="notificationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-bell"></i>
+                    <span data-ar="إعدادات الإشعارات" data-en="Notification Settings">إعدادات الإشعارات</span>
+                </h3>
+                <button class="close-btn" onclick="closeNotificationModal()">&times;</button>
+            </div>
+            <div class="notification-settings">
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="dailyNotifications" checked>
+                        <span data-ar="إشعارات يومية" data-en="Daily Notifications">إشعارات يومية</span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label for="dailyNotificationTime">
+                        <span data-ar="وقت الإشعار اليومي" data-en="Daily Notification Time">وقت الإشعار اليومي</span>
+                    </label>
+                    <input type="time" id="dailyNotificationTime" value="06:00">
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="lectureReminders" checked>
+                        <span data-ar="تذكير قبل المحاضرة بـ 30 دقيقة" data-en="Lecture reminder 30 minutes before">تذكير قبل المحاضرة بـ 30 دقيقة</span>
+                    </label>
+                </div>
+                <button class="btn-primary" onclick="saveNotificationSettings()">
+                    <i class="fas fa-save"></i>
+                    <span data-ar="حفظ الإعدادات" data-en="Save Settings">حفظ الإعدادات</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 data-ar="تم التطوير بواسطة" data-en="Developed by">تم التطوير بواسطة</h4>
+                    <p>ABDULLAH ALASAAD & ARX-Tech</p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-ar="تابعنا" data-en="Follow Us">تابعنا</h4>
+                    <a href="https://www.facebook.com/profile.php?id=61579097697055" target="_blank" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                        <span data-ar="فيسبوك" data-en="Facebook">فيسبوك</span>
+                    </a>
+                </div>
+                <div class="footer-section">
+                    <h4 data-ar="الدعم الفني" data-en="Technical Support">الدعم الفني</h4>
+                    <a href="https://t.me/mar01abdullah" target="_blank" class="support-link">
+                        <i class="fab fa-telegram"></i>
+                        <span data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p data-ar="جاري التحميل..." data-en="Loading...">جاري التحميل...</p>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg=>{
+    console.log('sw registered', reg);
+  }).catch(err=>console.warn('sw reg failed', err));
+}
+
+// register manifest link dynamically if not present
+(function ensureManifest(){
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const l = document.createElement('link');
+    l.rel='manifest';
+    l.href='/manifest.json';
+    document.head.appendChild(l);
+  }
+})();
+
+// example usage of local notifications
+async function tryNotify(){
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') {
+    await Notification.requestPermission();
+  }
+  // schedule a test notification 10 seconds later (works while app is open)
+  try {
+    // import dynamic module if available
+    const mod = await import('/js/local-notifications.js');
+    mod.scheduleNotificationIn(10, 'تذكير من تطبيق جامعتي', 'هذا تذكير محلي — يعمل فقط إذا كان التطبيق مفتوح.');
+    console.log('scheduled local notification in 10s');
+  } catch(e){ console.warn(e); }
+}
+document.addEventListener('DOMContentLoaded', ()=> {
+  const btn = document.createElement('button');
+  btn.textContent = 'اختبار إشعار محلي';
+  btn.onclick = tryNotify;
+  (document.body || document.documentElement).appendChild(btn);
+});
+</script>
+
+</body>
+</html>
+
